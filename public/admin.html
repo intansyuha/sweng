@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard | MMU Shuttle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- TOP NAV -->
+  <header class="top-nav">
+    <div class="logo">MMU Shuttle - Admin</div>
+    <nav>
+  
+  <a href="#" data-section="dashboard">Dashboard</a>
+  <a href="#" data-section="profile">Profile</a>
+  <a href="#" data-section="routes">Routes</a>
+  <a href="#" data-section="users">Create User</a>
+  <a href="#" data-section="manageUsers">Manage Users</a>
+  <a href="#" class="btn-nav" id="logoutBtn">Logout</a>
+</nav>
+
+
+  </header>
+
+  <!-- DASHBOARD SUMMARY -->
+ <section id="dashboard" class="section admin-section">
+
+    <h2>Admin Dashboard</h2>
+    <p class="section-subtitle">System overview and statistics.</p>
+
+    <div class="card">
+      <p><strong>Total Routes:</strong> <span id="totalRoutes">Loading...</span></p>
+      <p><strong>Total Bookings:</strong> <span id="totalBookings">Loading...</span></p>
+      <p><strong>Total Incidents:</strong> <span id="totalIncidents">Loading...</span></p>
+    </div>
+  </section>
+<section id="profile" class="section admin-section hidden">
+
+  <h2>My Profile</h2>
+  <p class="section-subtitle">Admin personal information.</p>
+
+  <form class="card form" id="adminProfileForm">
+    <label>Full Name</label>
+    <input type="text" id="adminName" disabled />
+
+    <label>Phone Number</label>
+    <input type="text" id="adminPhone" disabled />
+
+    <label>Email</label>
+    <input type="email" id="adminEmail" disabled />
+
+    <label>Office</label>
+    <input type="text" id="adminOffice" disabled />
+
+    <label>Emergency Contact</label>
+    <input type="text" id="adminEmergency" disabled />
+
+    <!-- ACTION BUTTON -->
+    <button type="button" class="btn-primary" id="editProfileBtn">
+      Edit Profile
+    </button>
+
+    <p id="adminProfileMsg" class="form-message"></p>
+  </form>
+</section>
+
+
+
+  <!-- ROUTE MANAGEMENT -->
+<section id="routes" class="section admin-section hidden">
+
+    <h2>Route Management</h2>
+    <p class="section-subtitle">View, add, or update shuttle routes.</p>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Route ID</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Departure</th>
+            <th>Driver</th>
+          </tr>
+        </thead>
+
+        <tbody id="adminRoutesBody">
+          <!-- Filled via script.js -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+ 
+
+  <!-- CREATE DRIVER / COORDINATOR -->
+ <section id="users" class="section admin-section hidden">
+
+    <h2>Create User (Driver / Coordinator)</h2>
+    <p class="section-subtitle">Admin only.</p>
+
+    <form class="card form" id="createUserForm">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="createName" required />
+      </div>
+
+      <div class="form-group">
+        <label>User ID</label>
+        <input type="text" id="createUserId" required />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="createPassword" required />
+      </div>
+
+      <div class="form-group">
+        <label>Role</label>
+        <select id="createRole" required>
+          <option value="">-- Select Role --</option>
+          <option value="Driver">Driver</option>
+          <option value="Coordinator">Coordinator</option>
+        </select>
+      </div>
+
+      <button class="btn-primary full-width" type="submit">Create User</button>
+      <p id="createUserMessage" class="form-message"></p>
+    </form>
+  </section>
+
+  <section id="manageUsers" class="section admin-section hidden">
+  <h2>User Management</h2>
+  <p class="section-subtitle">
+    View all accounts. Drivers & Coordinators can be edited.
+  </p>
+
+  <!-- STUDENTS -->
+  <div class="card">
+    <h3>Students</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody id="studentsBody"></tbody>
+    </table>
+  </div>
+
+  <!-- DRIVERS -->
+  <div class="card">
+    <h3>Drivers</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="driversBody"></tbody>
+    </table>
+  </div>
+
+  <!-- COORDINATORS -->
+  <div class="card">
+    <h3>Coordinators</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="coordinatorsBody"></tbody>
+    </table>
+  </div>
+</section>
+
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2025 Campus Shuttle Scheduling & Tracking System - Admin Panel</p>
+  </footer>
+
+  <!-- ROLE SECURITY -->
+  <script>
+    const role = localStorage.getItem("userRole");
+
+    if (role !== "Admin") {
+      alert("Unauthorized Access");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "login.html";
+    });
+  </script>
+
+  <!-- JS -->
+  <script src="script.js"></script>
+</body>
+</html>

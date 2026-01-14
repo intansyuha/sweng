@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up | MMU Shuttle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #f4f6fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .auth-card {
+      width: 420px;
+      padding: 2rem 2.3rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: #22316f;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid #ccd1e6;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #3450a1;
+      box-shadow: 0 0 0 2px #3450a122;
+    }
+
+    .btn-primary {
+      background: #3450a1;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 0.65rem;
+      border-radius: 999px;
+      cursor: pointer;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .btn-secondary {
+      background: #ffb703;
+      color: black;
+      border: none;
+      width: 100%;
+      padding: 0.65rem;
+      border-radius: 999px;
+      cursor: pointer;
+      margin-top: 0.4rem;
+    }
+
+    #otpSection {
+      display: none;
+    }
+
+    .auth-footer {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    a {
+      text-decoration: none;
+      color: #3450a1;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="auth-card">
+    <h1>Create Account</h1>
+
+    <form id="signupForm">
+      <label>Full Name</label>
+      <input type="text" id="fullName" required />
+
+      <label>Student ID</label>
+      <input type="text" id="studentId" required pattern="[A-Za-z0-9]{5,15}" />
+
+      <label>Email Address</label>
+      <input type="email" id="email" required />
+
+      <label>Password</label>
+      <input type="password" id="password" required />
+
+      <label>Confirm Password</label>
+      <input type="password" id="confirmPassword" required />
+
+      <button type="button" id="sendOtpButton" class="btn-secondary">
+        Send OTP
+      </button>
+
+      <div id="otpSection">
+        <label>Enter OTP</label>
+        <input type="text" id="otp" required />
+
+        <button type="submit" class="btn-primary">
+          Create Account
+        </button>
+      </div>
+    </form>
+
+    <p class="auth-footer">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </p>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <script>
+    // ====== CONFIG — EmailJS IDs ======
+    const SERVICE_ID = "service_m699ycm";
+    const TEMPLATE_ID = "template_i3jfqsg";
+    const PUBLIC_KEY = "6NpvRXyuREvU0lqpf";
+
+    emailjs.init(PUBLIC_KEY);
+
+    let generatedOtp = "";
+
+    // SEND OTP
+    document.getElementById("sendOtpButton").addEventListener("click", function () {
+      const email = document.getElementById("email").value.trim();
+      const pwd = document.getElementById("password").value.trim();
+      const cpwd = document.getElementById("confirmPassword").value.trim();
+
+      if (!email) {
+        alert("Please enter your email first.");
+        return;
+      }
+      if (!pwd || !cpwd) {
+        alert("Please enter password & confirm password.");
+        return;
+      }
+      if (pwd !== cpwd) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      // Generate 6-digit OTP
+      generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+        to_email: email,
+        otp: generatedOtp,
+      })
+      .then(() => {
+        alert("OTP sent to your email!");
+        document.getElementById("otpSection").style.display = "block";
+      })
+      .catch((error) => {
+        console.error("EmailJS Error:", error);
+        alert("Failed to send OTP. Check EmailJS settings.");
+      });
+    });
+
+    // VERIFY OTP + REGISTER
+    document.getElementById("signupForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const enteredOtp = document.getElementById("otp").value.trim();
+      if (enteredOtp !== generatedOtp) {
+        alert("Invalid OTP.");
+        return;
+      }
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const studentId = document.getElementById("studentId").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: fullName,
+          userId: studentId,
+          password: password
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Account created! Redirecting...");
+        window.location.href = "login.html";
+      } else {
+        alert(data.message || "Failed to create account.");
+      }
+    });
+  </script>
+
+</body>
+</html>

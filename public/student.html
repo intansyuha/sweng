@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <meta charset="UTF-8" />
+  <title>Student Dashboard | MMU Shuttle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="logo">MMU Shuttle</div>
+    <nav>
+      <a href="#notifications">Notifications</a>
+
+      <a href="#profile">Profile</a>
+      <a href="#home">Home</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#booking">Booking</a>
+      <a href="#mybookings">My Bookings</a>
+      <a href="#tracking">Tracking</a>
+      <!-- Removed Admin -->
+      <a href="#" class="btn-nav" id="logoutLink">Logout</a>
+    </nav>
+  </header>
+
+  <!-- PROFILE -->
+<section id="profile" class="section">
+  <h2>My Profile</h2>
+  <p class="section-subtitle">Manage your personal information.</p>
+
+  <form class="card form">
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" value="Student Name">
+    </div>
+
+    <div class="form-group">
+      <label>Student ID</label>
+      <input type="text" value="MMU123456" disabled>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" placeholder="student@mmu.edu.my">
+    </div>
+
+    <button class="btn-primary">Update Profile</button>
+  </form>
+</section>
+<!-- NOTIFICATIONS -->
+<section id="notifications" class="section">
+  <h2>Notifications</h2>
+  <p class="section-subtitle">Important updates related to shuttle services.</p>
+
+  <div class="card">
+    <ul id="notificationList">
+      <!-- Notifications will appear here -->
+    </ul>
+
+    <p class="form-message">
+      No new notifications at the moment.
+    </p>
+  </div>
+</section>
+
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="hero-text">
+      <h1>Campus Shuttle Scheduling & Tracking System</h1>
+      <p>
+        A smart platform for students to manage shuttle routes, bookings,
+        and live tracking on campus.
+      </p>
+      <div class="hero-actions">
+        <a href="#schedule" class="btn-primary">View Shuttle Schedule</a>
+        <a href="#booking" class="btn-secondary">Book a Seat</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h2>Today’s Next Shuttle</h2>
+      <p><strong>Route:</strong> <span id="heroRoute">Loading...</span></p>
+      <p><strong>Departure:</strong> <span id="heroDeparture">Loading...</span></p>
+      <p><strong>Status:</strong> <span id="heroStatus">Loading...</span></p>
+    </div>
+  </section>
+
+  <!-- SHUTTLE SCHEDULE -->
+  <section id="schedule" class="section">
+    <h2>Shuttle Schedule</h2>
+    <p class="section-subtitle">View available routes and departure times.</p>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Route ID</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Departure</th>
+            <th>Driver</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- BOOKING -->
+  <section id="booking" class="section section-grid">
+    <div>
+      <h2>Seat Booking</h2>
+      <p class="section-subtitle">Students can reserve a seat on a selected shuttle.</p>
+
+      <form class="card form" id="bookingForm">
+        <div class="form-group">
+          <label for="studentName">Student Name</label>
+          <input type="text" id="studentName" required />
+        </div>
+
+        <div class="form-group">
+          <label for="studentId">Student ID</label>
+          <input type="text" id="studentId" required />
+        </div>
+
+        <div class="form-group">
+          <label for="routeSelect">Route</label>
+          <select id="routeSelect" required>
+            <option value="">-- Select Route --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="timeSelect">Preferred Time</label>
+          <input type="time" id="timeSelect" required />
+        </div>
+
+        <button type="submit" class="btn-primary full-width">Submit Booking</button>
+        <p id="bookingMessage" class="form-message"></p>
+      </form>
+    </div>
+
+    <div class="card info-card">
+      <h3>Booking Rules</h3>
+      <ul>
+        <li>Each student can reserve 1 seat per time slot.</li>
+        <li>Bookings close 15 minutes before departure time.</li>
+        <li>Late arrivals may lose their reserved seat.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- MY BOOKINGS -->
+  <section id="mybookings" class="section">
+    <h2>My Bookings</h2>
+    <p class="section-subtitle">View and manage your shuttle bookings.</p>
+
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Route</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="myBookingsBody"></tbody>
+      </table>
+    </div>
+  </section>
+<!-- INCIDENT REPORT -->
+<section id="incident" class="section">
+  <h2>Report Incident</h2>
+  <p class="section-subtitle">Report issues related to shuttle service.</p>
+
+  <form class="card form" id="incidentForm">
+    <div class="form-group">
+      <label>Incident Type</label>
+      <select required>
+        <option value="">-- Select --</option>
+        <option>Bus Delay</option>
+        <option>Bus Breakdown</option>
+        <option>Driver Issue</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea rows="4" placeholder="Describe the issue..." required></textarea>
+    </div>
+
+    <button class="btn-primary">Submit Report</button>
+  </form>
+</section>
+
+  <!-- TRACKING -->
+  <section id="tracking" class="section">
+    <h2>Live Shuttle Tracking</h2>
+    <p class="section-subtitle">View live shuttle movement on campus.</p>
+
+    <div class="card tracking-card">
+      <div class="tracking-map">
+        <div id="mmuMap" style="height: 320px;"></div>
+      </div>
+
+      <div class="tracking-details">
+        <h3 id="trackingRouteTitle">Loading...</h3>
+        <p><strong>Current Location:</strong> <span id="trackingCurrentLocation">Loading...</span></p>
+        <p><strong>ETA:</strong> <span id="trackingEta">Loading...</span></p>
+        <p><strong>Status:</strong> <span id="trackingStatus">Loading...</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2025 Campus Shuttle Scheduling & Tracking System - T10L</p>
+  </footer>
+
+  <!-- PROTECT STUDENT PAGE -->
+  <script>
+    const role = localStorage.getItem("userRole");
+
+    if (role !== "Student") {
+      alert("Unauthorized access.");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("logoutLink").addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "login.html";
+    });
+  </script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>

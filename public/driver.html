@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Driver Dashboard | MMU Shuttle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+
+  <!-- TOP NAV -->
+  <header class="top-nav">
+    <div class="logo">MMU Shuttle</div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#route">Assigned Route</a>
+      <a href="#location">Update Location</a>
+      <a href="#incident">Report Incident</a>
+      <a href="#" class="btn-nav" id="logoutBtn">Logout</a>
+    </nav>
+  </header>
+
+  <!-- HOME -->
+  <section id="home" class="section">
+    <h2>Welcome, Driver</h2>
+    <p class="section-subtitle">
+      Manage your shuttle tasks, update your location, and report incidents.
+    </p>
+  </section>
+
+  <!-- ASSIGNED ROUTE -->
+  <section id="route" class="section">
+    <h2>Your Assigned Route</h2>
+    <div class="card">
+      <p><strong>Route ID:</strong> <span id="driverRouteId">Loading...</span></p>
+      <p><strong>From:</strong> <span id="driverFrom">Loading...</span></p>
+      <p><strong>To:</strong> <span id="driverTo">Loading...</span></p>
+      <p><strong>Departure:</strong> <span id="driverDeparture">Loading...</span></p>
+    </div>
+  </section>
+
+  <!-- UPDATE LOCATION -->
+  <section id="location" class="section">
+    <h2>Update Shuttle Location</h2>
+
+    <form class="card form" id="locationForm">
+      <label>Current Location</label>
+      <input type="text" id="currentLocation" placeholder="e.g. Near Main Gate" required />
+
+      <label>Status</label>
+      <select id="currentStatus">
+        <option value="On Time">On Time</option>
+        <option value="Delayed">Delayed</option>
+        <option value="Breakdown">Breakdown</option>
+      </select>
+
+      <button class="btn-primary" type="submit">Update Location</button>
+      <p id="locationMsg" class="form-message"></p>
+    </form>
+  </section>
+
+  <!-- REPORT INCIDENT -->
+  <section id="incident" class="section">
+    <h2>Report an Incident</h2>
+
+    <form class="card form" id="incidentForm">
+      <label>Description</label>
+      <textarea id="incidentText" placeholder="Describe the issue..." required></textarea>
+
+      <button class="btn-primary" type="submit">Submit Report</button>
+      <p id="incidentMsg" class="form-message"></p>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2025 Campus Shuttle Scheduling & Tracking System - T10L</p>
+  </footer>
+
+  <!-- PROTECT DRIVER ONLY -->
+  <script>
+    const role = localStorage.getItem("userRole");
+
+    if (role !== "Driver") {
+      alert("Unauthorized Access");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "login.html";
+    });
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>

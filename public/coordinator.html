@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  <meta charset="UTF-8" />
+  <title>Coordinator Dashboard | MMU Shuttle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Leaflet (MUST be inside head) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+  </script>
+</head>
+
+<body>
+
+
+
+<div id="successModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="success-icon">✓</div>
+
+    <div class="success-title" id="successTitle">SUCCESS</div>
+    <div class="success-text" id="successText">Done</div>
+
+    <button id="successOkBtn" class="btn-primary">OK</button>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div id="deleteModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="success-title" id="deleteTitle">Confirm Delete</div>
+    <div class="success-text" id="deleteText">Are you sure want to delete this route ?</div>
+
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <button id="deleteYesBtn" class="btn-danger">Yes, Delete</button>
+      <button id="deleteCancelBtn" class="btn-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- TOP NAV -->
+<header class="top-nav">
+  <div class="logo">MMU Shuttle - Coordinator</div>
+  <nav>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#routes">Routes</a>
+    <a href="#bookings">Bookings</a>
+    <a href="#incidents">Incidents</a>
+    <a href="#tracking">Tracking</a>
+    <a href="#" class="btn-nav" id="logoutBtn">Logout</a>
+  </nav>
+</header>
+
+<!-- DASHBOARD SUMMARY -->
+<section id="dashboard" class="section">
+  <h2>Coordinator Dashboard</h2>
+  <p class="section-subtitle">Overview of campus shuttle operations.</p>
+
+  <div class="card">
+    <p><strong>Total Routes:</strong> <span id="totalRoutes">Loading...</span></p>
+    <p><strong>Total Bookings:</strong> <span id="totalBookings">Loading...</span></p>
+    <p><strong>Total Incidents:</strong> <span id="totalIncidents">Loading...</span></p>
+  </div>
+</section>
+
+<section id="routes" class="section">
+  <h2>Create Shuttle Route</h2>
+  <p class="section-subtitle">Assign driver and schedule shuttle routes.</p>
+
+  <form id="createRouteForm" class="card route-bar">
+    <select id="fromLocation" required>
+      <option value="">From</option>
+      <option value="Main Gate">Main Gate</option>
+      <option value="Faculty of IT">Faculty of IT</option>
+      <option value="Library">Library</option>
+      <option value="Hostel">Hostel</option>
+      <option value="Admin Block">Admin Block</option>
+    </select>
+
+    <select id="toLocation" required>
+      <option value="">To</option>
+      <option value="Main Gate">Main Gate</option>
+      <option value="Faculty of IT">Faculty of IT</option>
+      <option value="Library">Library</option>
+      <option value="Hostel">Hostel</option>
+      <option value="Admin Block">Admin Block</option>
+    </select>
+
+    <select id="driverSelect" required>
+      <option value="">Assign Driver</option>
+    </select>
+
+    <input type="time" id="departureTime" required />
+
+    <button type="submit" class="btn-primary">Create Route</button>
+
+    <p id="createRouteMessage" class="form-message"></p>
+  </form>
+
+<h2 style="margin-top:40px;">All Shuttle Routes</h2>
+
+<button
+  id="deleteSelectedBtn"
+  class="btn-danger"
+  style="margin-bottom:15px;"
+  disabled
+>
+  Delete Selected
+</button>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>
+          <input type="checkbox" id="selectAllRoutes">
+        </th>
+        <th>Route ID</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Departure</th>
+        <th>Driver</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody id="coordinatorRoutesBody"></tbody>
+  </table>
+</div>
+</section>
+
+<!-- INCIDENTS TABLE -->
+<section id="incidents" class="section">
+  <h2>Incident Reports</h2>
+  <p class="section-subtitle">View incidents reported by shuttle drivers.</p>
+
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Incident ID</th>
+          <th>Driver</th>
+          <th>Description</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody id="coordinatorIncidentsBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- LIVE TRACKING -->
+<section id="tracking" class="section">
+  <h2>Live Shuttle Tracking</h2>
+  <p class="section-subtitle">Monitor shuttle movement in real time.</p>
+
+  <div class="card tracking-card">
+    <div class="tracking-map">
+      <div id="mmuMap" style="height: 320px;"></div>
+    </div>
+
+    <div class="tracking-details">
+      <h3 id="trackingRouteTitle">Loading...</h3>
+      <p><strong>Current Location:</strong> <span id="trackingCurrentLocation">Loading...</span></p>
+      <p><strong>ETA:</strong> <span id="trackingEta">Loading...</span></p>
+      <p><strong>Status:</strong> <span id="trackingStatus">Loading...</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>© 2025 Campus Shuttle Scheduling & Tracking System - Coordinator Panel</p>
+</footer>
+
+<!-- ROLE SECURITY -->
+<script>
+  const role = localStorage.getItem("userRole");
+
+  if (role !== "Coordinator") {
+    alert("Unauthorized Access");
+    window.location.href = "login.html";
+  }
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.clear();
+    window.location.href = "login.html";
+  });
+</script>
+
+<script src="script.js" defer></script>
+
+</body>
+</html>

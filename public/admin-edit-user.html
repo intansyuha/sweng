@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit User | Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="page-container">
+  <div class="card">
+    <h2>Edit User</h2>
+    <p class="subtitle">Modify driver or coordinator account details</p>
+
+    <form id="editUserForm" class="form-grid">
+      
+      <div class="form-group">
+        <label>User ID</label>
+        <input type="text" id="editUserId" disabled />
+      </div>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="editFullName" />
+      </div>
+
+      <div class="form-group">
+        <label>Role</label>
+        <select id="editRole">
+          <option value="Driver">Driver</option>
+          <option value="Coordinator">Coordinator</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>New Password</label>
+        <input
+          type="password"
+          id="editPassword"
+          placeholder="Leave blank to keep current password"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Save Changes</button>
+      </div>
+
+      <p id="editUserMsg" class="form-msg"></p>
+    </form>
+
+    <hr />
+
+    <div class="danger-zone">
+      <h3>Danger Zone</h3>
+      <p>This action cannot be undone.</p>
+      <button id="deleteUserBtn" class="btn-danger">Delete User</button>
+    </div>
+  </div>
+</div>
+
+
+  <script src="script.js"></script>
+  <script>
+    initEditUserPage();
+  </script>
+</body>
+</html>

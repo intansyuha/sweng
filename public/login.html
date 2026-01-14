@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | MMU Shuttle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-image: url("images/mmu-bg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+
+
+  background-position: center top;
+}
+
+
+
+
+
+    /* ------------------------------
+       GLASS LOGIN CARD
+    ------------------------------ */
+    .login-box {
+  width: 420px;
+  padding: 2.6rem 2.4rem;
+
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.35);
+
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-box h2 {
+      color: #ffffff;
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* ------------------------------
+       FORM STYLING
+    ------------------------------ */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      color: white;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.7rem;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.35);
+      color: #003366;
+      font-size: 0.95rem;
+      outline: none;
+      transition: 0.25s;
+    }
+
+    input:focus, select:focus {
+      background: rgba(255,255,255,0.9);
+      border-color: #ffffff;
+      box-shadow: 0 0 0 3px #ffffff65;
+    }
+
+    ::placeholder {
+      color: #335a8c;
+    }
+
+    /* ------------------------------
+       LOGIN BUTTON
+    ------------------------------ */
+    .btn-primary {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 0.9rem;
+      border: none;
+      background: #0038ff;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.25s ease;
+      margin-top: 0.6rem;
+    }
+
+    .btn-primary:hover {
+      background: #002acc;
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    /* ------------------------------
+       BOTTOM LINK
+    ------------------------------ */
+    .link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    .link a {
+      color: #fff;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    #loginMessage {
+      color: #ffdddd;
+      text-align: center;
+      font-size: 0.85rem;
+      min-height: 20px;
+      margin-top: 0.5rem;
+    }
+    /* ===== BACKGROUND BLUR LAYER ===== */
+.bg-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 0;
+}
+
+
+  </style>
+</head>
+
+<body>
+  <div class="bg-blur"></div>
+
+
+  <div class="login-box">
+    <h2>MMU Shuttle Login</h2>
+
+    <form id="loginForm">
+
+      <div class="form-group">
+        <label>User ID</label>
+        <input type="text" id="loginUser" placeholder="MMU123456" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="Enter password" required>
+      </div>
+
+      <div class="form-group">
+        <label>Role</label>
+        <select id="loginRole" required>
+          <option value="">-- Select Role --</option>
+          <option value="Student">Student</option>
+          <option value="Driver">Driver</option>
+          <option value="Coordinator">Coordinator</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary">Login</button>
+      <p id="loginMessage"></p>
+
+    </form>
+
+    <div class="link">
+      Don’t have an account? <a href="signup.html">Sign Up</a>
+    </div>
+
+  </div>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("loginForm");
+  const msg = document.getElementById("loginMessage");
+
+  if (!form) {
+    console.error("Login form not found");
+    return;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const userId = document.getElementById("loginUser").value.trim();
+    const password = document.getElementById("loginPass").value.trim();
+    const role = document.getElementById("loginRole").value;
+
+    msg.textContent = "";
+
+    if (!userId || !password || !role) {
+      msg.textContent = "Please fill in all fields.";
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        msg.textContent = data.message || "Login failed.";
+        return;
+      }
+
+      if (data.role !== role) {
+        msg.textContent = "Selected role does not match this account.";
+        return;
+      }
+
+   localStorage.setItem("userToken", data.token);
+localStorage.setItem("userRole", data.role);
+localStorage.setItem("userId", data.userId);
+
+
+
+      if (data.role === "Student") window.location.href = "student.html";
+      else if (data.role === "Driver") window.location.href = "driver.html";
+      else if (data.role === "Coordinator") window.location.href = "coordinator.html";
+      else if (data.role === "Admin") window.location.href = "admin.html";
+
+    } catch (err) {
+      console.error(err);
+      msg.textContent = "Server not responding.";
+    }
+  });
+});
+</script>
